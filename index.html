@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Key Path Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>JSON Key Path Finder</h1>
+        <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+        </label>
+        <label for="jsonInput">Enter JSON data:</label>
+        <textarea id="jsonInput" placeholder="Enter your JSON data here..."></textarea>
+        <label for="keyInput">Enter Search key:</label>
+        <input type="text" id="keyInput" placeholder="Enter the key to find the path for...">
+        <button id="searchButton">Search</button>
+        <label for="result">Output:</label>
+        <pre id="result">Key - </pre>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
