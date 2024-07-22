@@ -3,24 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://wallpapers-clan.com/wp-content/uploads/2023/01/one-punch-man-saitama-pfp-13.jpg" type="image/x-icon">
     <title>JSON Key Path Finder</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>JSON Key Path Finder</h1>
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-        </label>
+        <div class="header">
+            <h1>JSON Key Path Finder</h1>
+            <div class="mode-container">
+                <label for="modeSelector"></label>
+                <select id="modeSelector">
+                    <option value="system">System Default</option>
+                    <option value="light">Light Mode</option>
+                    <option value="dark">Dark Mode</option>
+                </select>
+            </div>
+        </div>
+
         <label for="jsonInput">Enter JSON data:</label>
-        <textarea id="jsonInput" placeholder="Enter your JSON data here..."></textarea>
+        <textarea id="jsonInput" placeholder="Enter JSON data here...(head -1 of any JSON)"></textarea>
+
         <label for="keyInput">Enter Search key:</label>
-        <input type="text" id="keyInput" placeholder="Enter the key to find the path for...">
-        <button id="searchButton">Search</button>
-        <label for="result">Output:</label>
-        <pre id="result">Key - </pre>
+        <input type="text" id="keyInput" placeholder="Enter key to search for...(Use comma for multiple keys)">
+
+        <div class="button-container">
+            <button id="searchButton">Search</button>
+            <button id="getAllKeysButton">Get All Keys</button>
+        </div>
+
+        <pre id="result"></pre>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

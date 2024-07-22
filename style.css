@@ -24,14 +24,21 @@ body.dark-mode {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    max-width: 80%;
     width: 100%;
     transition: background-color 0.3s, box-shadow 0.3s;
+    position: relative;
 }
 
 body.dark-mode .container {
     background: #1e1e1e;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 h1 {
@@ -80,6 +87,11 @@ body.dark-mode input {
     border: 1px solid #555;
 }
 
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
 button {
     padding: 10px 15px;
     background-color: #007BFF;
@@ -89,7 +101,6 @@ button {
     cursor: pointer;
     width: 100%;
     font-size: 16px;
-    margin: 10px 0;
     transition: background-color 0.3s, transform 0.3s;
 }
 
@@ -112,6 +123,9 @@ pre {
     font-size: 16px;
     color: #333;
     transition: background-color 0.3s, color 0.3s;
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 body.dark-mode pre {
@@ -120,59 +134,103 @@ body.dark-mode pre {
     border: 1px solid #555;
 }
 
-/* Dark mode toggle switch */
-.switch {
+/* Style for the mode selector dropdown */
+.mode-container select {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+body.dark-mode .mode-container select {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+/* Style for the dropdown options */
+.mode-container select option {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+body.dark-mode .mode-container select option {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+/* Theme switcher styles */
+.theme-switcher {
     position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 20px;
-    float: right;
-    margin-top: -20px;
-    margin-bottom: 20px;
 }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
+.theme-icon {
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
+    width: 24px;
+    height: 24px;
 }
 
-.slider:before {
+.theme-menu {
+    display: none;
     position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
+    top: 30px;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 150px;
 }
 
-input:checked + .slider {
-    background-color: #007BFF;
+.theme-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-input:checked + .slider:before {
-    transform: translateX(20px);
+.theme-menu li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-body.dark-mode .slider {
-    background-color: #555;
+.theme-menu li:hover {
+    background-color: #f0f0f0;
 }
 
-body.dark-mode input:checked + .slider {
-    background-color: #007BFF;
+body.dark-mode .theme-menu {
+    background: #1e1e1e;
+    border-color: #555;
+}
+
+body.dark-mode .theme-menu li {
+    color: #e0e0e0;
+}
+
+body.light-mode .theme-menu {
+    background: #ffffff;
+    border-color: #ccc;
+}
+
+body.light-mode .theme-menu li {
+    color: #333;
+}
+
+/* Responsive design for mobile screens */
+@media (max-width: 768px) {
+    .container {
+        max-width: 90%;
+    }
+
+    textarea {
+        height: 200px;
+    }
+
+    button {
+        font-size: 14px;
+    }
 }
