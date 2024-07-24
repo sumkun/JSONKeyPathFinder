@@ -1,114 +1,151 @@
-document.getElementById('searchButton').addEventListener('click', () => {
-    const jsonInput = document.getElementById('jsonInput').value;
-    const keysInput = document.getElementById('keyInput').value;
-    const result = document.getElementById('result');
-
-    try {
-        const jsonData = JSON.parse(jsonInput);
-        const keys = keysInput.split(',').map(key => key.trim());
-        const results = keys.map(key => {
-            const keyPaths = findAllKeyPaths(jsonData, key);
-            return keyPaths.length > 0 ? `${key} - ${keyPaths.join('\n')}` : `${key} - Not found`;
-        });
-
-        result.textContent = results.join('\n\n');
-    } catch (e) {
-        result.textContent = 'Invalid JSON data';
-    }
-});
-
-document.getElementById('getAllKeysButton').addEventListener('click', () => {
-    const jsonInput = document.getElementById('jsonInput').value;
-    const result = document.getElementById('result');
-
-    try {
-        const jsonData = JSON.parse(jsonInput);
-        const allKeys = getAllKeys(jsonData);
-        const formattedKeys = allKeys.map(path => path.join('.')).join('\n');
-        result.textContent = formattedKeys;
-    } catch (e) {
-        result.textContent = 'Invalid JSON data';
-    }
-});
-
-function findAllKeyPaths(obj, key, path = [], allPaths = []) {
-    if (typeof obj !== 'object' || obj === null) {
-        return allPaths;
-    }
-
-    for (const k in obj) {
-        if (k === key) {
-            allPaths.push(path.concat(k).join('.'));
-        }
-        if (obj.hasOwnProperty(k)) {
-            const newPath = path.concat(k);
-            if (Array.isArray(obj[k])) {
-                obj[k].forEach(item => findAllKeyPaths(item, key, newPath, allPaths));
-            } else if (typeof obj[k] === 'object') {
-                findAllKeyPaths(obj[k], key, newPath, allPaths);
-            }
-        }
-    }
-
-    return allPaths;
-}
-
-function getAllKeys(obj, path = [], allPaths = []) {
-    if (typeof obj !== 'object' || obj === null) {
-        return allPaths;
-    }
-
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            const newPath = path.concat(key);
-            allPaths.push(newPath);
-
-            if (Array.isArray(obj[key])) {
-                obj[key].forEach(item => getAllKeys(item, newPath, allPaths));
-            } else if (typeof obj[key] === 'object') {
-                getAllKeys(obj[key], newPath, allPaths);
-            }
-        }
-    }
-
-    return allPaths;
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    const modeSelector = document.getElementById('modeSelector');
-    const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const inputJsonTextarea = document.querySelector('#jsonInput');
+    const jsonKeysDisplay = document.querySelector('#jsonKeysDisplay');
+    const jsonTreeContainer = document.querySelector('#jsonTreeContainer');
+    const keyFilterInput = document.querySelector('#keyFilter');
+    const themeSelect = document.querySelector('#themeSelect');
 
-    // Set initial mode based on system preference or saved mode
-    const savedMode = localStorage.getItem('theme') || (systemDarkMode ? 'dark' : 'light');
-    setMode(savedMode);
+    let jsonData = {};
+    let uniqueKeyPaths = new Set();
 
-    // Handle mode change via the dropdown
-    modeSelector.addEventListener('change', (event) => {
-        const selectedMode = event.target.value;
-        setMode(selectedMode);
+    // Function to render JSON keys
+    const renderJsonKeys = (keys) => {
+        jsonKeysDisplay.innerHTML = '';
+        if (keys.length === 0) {
+            jsonKeysDisplay.textContent = 'No keys to display.';
+        } else {
+            keys.forEach(key => {
+                const listItem = document.createElement('div');
+                listItem.textContent = key;
+                jsonKeysDisplay.appendChild(listItem);
+            });
+        }
+    };
+
+    // Function to render JSON tree
+    const renderJsonTree = (data, container) => {
+        container.innerHTML = '';
+        if (Object.keys(data).length === 0) {
+            container.textContent = 'No data to display.';
+        } else {
+            const createTree = (obj) => {
+                const ul = document.createElement('ul');
+                for (const [key, value] of Object.entries(obj)) {
+                    const li = document.createElement('li');
+                    li.textContent = key;
+                    if (typeof value === 'object' && value !== null) {
+                        li.appendChild(createTree(value));
+                    } else {
+                        li.textContent = `${key}: ${value}`;
+                    }
+                    ul.appendChild(li);
+                }
+                return ul;
+            };
+            container.appendChild(createTree(data));
+        }
+    };
+
+    // Function to parse JSON and update displays
+    const parseAndDisplayJson = () => {
+        try {
+            jsonData = JSON.parse(inputJsonTextarea.value);
+            uniqueKeyPaths.clear();
+
+            // Extract unique keys from JSON
+            const extractKeys = (obj, path = '') => {
+                if (obj && typeof obj === 'object') {
+                    for (const [key, value] of Object.entries(obj)) {
+                        // Skip non-string keys and array indices
+                        if (typeof key !== 'string' || Array.isArray(obj)) continue;
+
+                        const newPath = path ? `${path}.${key}` : key;
+                        uniqueKeyPaths.add(newPath);
+                        if (typeof value === 'object' && value !== null) {
+                            extractKeys(value, newPath);
+                        }
+                    }
+                }
+            };
+            extractKeys(jsonData);
+
+            // Render JSON keys and tree
+            renderJsonKeys([...uniqueKeyPaths]);
+            renderJsonTree(jsonData, jsonTreeContainer);
+        } catch (error) {
+            console.error('Invalid JSON:', error);
+            renderJsonKeys([]);
+            renderJsonTree({}, jsonTreeContainer);
+            jsonKeysDisplay.textContent = 'Invalid JSON. Please correct the JSON format.';
+        }
+    };
+
+    // Function to handle tab switch
+    const handleTabSwitch = (activeTab) => {
+        tabButtons.forEach(button => {
+            const targetId = button.getAttribute('data-tab') + 'Tab';
+            const targetTab = document.querySelector(`#${targetId}`);
+            if (button === activeTab) {
+                button.classList.add('active');
+                targetTab.style.display = 'block';
+            } else {
+                button.classList.remove('active');
+                targetTab.style.display = 'none';
+            }
+        });
+    };
+
+    // Event listener for tab buttons
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            handleTabSwitch(button);
+            parseAndDisplayJson(); // Reparse JSON when switching tabs
+        });
     });
 
-    // Listen for system preference changes
-    if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-            if (modeSelector.value === 'system') {
-                setMode(event.matches ? 'dark' : 'light');
-            }
+    // Event listener for key filter input
+    keyFilterInput.addEventListener('input', () => {
+        const query = keyFilterInput.value.toLowerCase();
+        jsonKeysDisplay.querySelectorAll('div').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(query) ? '' : 'none';
         });
-    }
-});
+    });
 
-function setMode(mode) {
-    if (mode === 'system') {
-        document.body.classList.remove('dark-mode', 'light-mode');
-        localStorage.removeItem('theme');
-    } else if (mode === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-        localStorage.setItem('theme', 'dark');
+    // Function to apply the selected theme
+    const applyTheme = (theme) => {
+        if (theme === 'system') {
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+        } else if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    };
+
+    // Event listener for theme select
+    themeSelect.addEventListener('change', (event) => {
+        applyTheme(event.target.value);
+    });
+
+    // Set initial theme based on system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        themeSelect.value = 'system';
+        applyTheme('system');
     } else {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
+        applyTheme('system');
     }
-}
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (themeSelect.value === 'system') {
+            applyTheme('system');
+        }
+    });
+
+    // Initial setup
+    handleTabSwitch(tabButtons[0]); // Set default tab
+    parseAndDisplayJson(); // Initial parse
+});
