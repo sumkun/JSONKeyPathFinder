@@ -8,16 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const jqKeyFilterInput = document.querySelector('#jqKeyFilter');
     const themeSelect = document.querySelector('#themeSelect');
 
-    // Elements for Comma Separator
     const inputCommaText = document.querySelector('#inputCommaText');
     const outputCommaText = document.querySelector('#outputCommaText');
     const toCommaButton = document.querySelector('#toCommaButton');
     const fromCommaButton = document.querySelector('#fromCommaButton');
 
-    let jsonData = {};
     let uniqueKeyPaths = new Set();
 
-    // Function to handle switching tabs
+    // Handle tab switching
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             document.querySelector('.tab-button.active').classList.remove('active');
@@ -30,10 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Default active tab
     document.querySelector('.tab-button.active').click();
 
-    // Function to handle comma separation
+    // Handle comma separation
     const convertToCommaSeparated = () => {
         const inputText = inputCommaText.value;
         const outputText = inputText.split('\n').map(line => line.trim()).filter(line => line).join(', ');
@@ -46,51 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
         inputCommaText.value = outputText;
     };
 
-    // Attach event listeners for comma separator buttons
     toCommaButton.addEventListener('click', convertToCommaSeparated);
     fromCommaButton.addEventListener('click', convertFromCommaSeparated);
 
-    // Function to render JSON keys
+    // Render JSON keys
     const renderJsonKeys = (keys) => {
-        jsonKeysDisplay.innerHTML = '';
-        if (keys.length === 0) {
-            jsonKeysDisplay.textContent = 'No keys to display.';
-        } else {
-            keys.forEach(key => {
-                const listItem = document.createElement('div');
-                listItem.textContent = key;
-                jsonKeysDisplay.appendChild(listItem);
-            });
-        }
+        jsonKeysDisplay.innerHTML = keys.length ? keys.map(key => `<div>${key}</div>`).join('') : 'No keys to display.';
     };
 
-    // Function to render jq-style JSON keys
+    // Render jq-style JSON keys
     const renderJqKeys = (keys) => {
-        jqKeysDisplay.innerHTML = '';
-        if (keys.length === 0) {
-            jqKeysDisplay.textContent = 'No jq keys to display.';
-        } else {
-            keys.forEach(key => {
-                const listItem = document.createElement('div');
-                listItem.textContent = key;
-                jqKeysDisplay.appendChild(listItem);
-            });
-        }
+        jqKeysDisplay.innerHTML = keys.length ? keys.map(key => `<div>${key}</div>`).join('') : 'No jq keys to display.';
     };
 
-    // Function to render JSON tree with only keys that have standalone values
+    // Render JSON tree
     const renderJsonTree = (data, container) => {
         container.innerHTML = '';
 
         const createTree = (obj) => {
             const ul = document.createElement('ul');
-
             for (let key in obj) {
                 if (Object.hasOwnProperty.call(obj, key)) {
                     const li = document.createElement('li');
                     li.textContent = key;
 
-                    // Check if the value is an object and not null, while filtering out arrays
                     if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
                         li.appendChild(createTree(obj[key]));
                     } else if (obj[key] !== undefined && obj[key] !== null) {
@@ -102,45 +78,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     ul.appendChild(li);
                 }
             }
-
             return ul;
         };
 
         container.appendChild(createTree(data));
     };
 
-    // Function to extract keys from JSON and skip array indices
+    // Extract JSON keys
     const extractJsonKeys = (obj, prefix = '') => {
-        Object.keys(obj).forEach(key => {
-            const fullKey = prefix ? `${prefix}.${key}` : key;
-            
-            // Skip keys that are array indices
-            if (isNaN(key)) {
-                uniqueKeyPaths.add(fullKey);
+        for (let key in obj) {
+            if (Object.hasOwnProperty.call(obj, key)) {
+                const fullKey = prefix ? `${prefix}.${key}` : key;
 
-                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-                    extractJsonKeys(obj[key], fullKey);
+                if (isNaN(key)) {
+                    uniqueKeyPaths.add(fullKey);
+
+                    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                        extractJsonKeys(obj[key], fullKey);
+                    }
                 }
             }
-        });
+        }
     };
 
-    // Function to filter keys
-    const filterKeys = (filter, keys) => {
-        return keys.filter(key => key.includes(filter));
-    };
+    // Filter keys
+    const filterKeys = (filter, keys) => keys.filter(key => key.includes(filter));
 
-    // Event listener for JSON input
+    // Handle JSON input with multiple objects support
     inputJsonTextarea.addEventListener('input', () => {
         try {
-            jsonData = JSON.parse(inputJsonTextarea.value);
+            const inputText = inputJsonTextarea.value.trim();
+
+            // Allow multiple JSON objects separated by newlines or custom separator (---)
+            const jsonObjects = inputText.split(/\n|---/).map(jsonStr => jsonStr.trim()).filter(jsonStr => jsonStr);
+
             uniqueKeyPaths.clear();
-            extractJsonKeys(jsonData);
+            jsonTreeContainer.innerHTML = '';
+
+            jsonObjects.forEach(jsonStr => {
+                const jsonData = JSON.parse(jsonStr);
+                extractJsonKeys(jsonData);
+                renderJsonTree(jsonData, jsonTreeContainer);
+            });
 
             const allKeys = Array.from(uniqueKeyPaths);
             renderJsonKeys(allKeys);
             renderJqKeys(allKeys.map(key => `.${key}`));
-            renderJsonTree(jsonData, jsonTreeContainer);
 
         } catch (error) {
             jsonKeysDisplay.textContent = 'Invalid JSON.';
@@ -149,38 +132,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Event listener for key filter
+    // Filter displayed keys
     keyFilterInput.addEventListener('input', () => {
         const filteredKeys = filterKeys(keyFilterInput.value, Array.from(uniqueKeyPaths));
         renderJsonKeys(filteredKeys);
     });
 
-    // Event listener for jq key filter
     jqKeyFilterInput.addEventListener('input', () => {
         const filteredKeys = filterKeys(jqKeyFilterInput.value, Array.from(uniqueKeyPaths).map(key => `.${key}`));
         renderJqKeys(filteredKeys);
     });
 
-    // Event listener for theme selection
+    // Handle theme switching
     themeSelect.addEventListener('change', () => {
         const selectedTheme = themeSelect.value;
-        if (selectedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
-        }
+        document.body.classList.toggle('dark-mode', selectedTheme === 'dark');
     });
 
     // Apply system theme initially
     const applySystemTheme = () => {
         const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (isDarkMode) {
-            document.body.classList.add('dark-mode');
-            themeSelect.value = 'system';
-        } else {
-            document.body.classList.remove('dark-mode');
-            themeSelect.value = 'system';
-        }
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        themeSelect.value = 'system';
     };
 
     applySystemTheme();
