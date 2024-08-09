@@ -3,38 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="https://wallpapers-clan.com/wp-content/uploads/2023/01/one-punch-man-saitama-pfp-13.jpg" type="image/x-icon">
-    <title>JSON Key Path Finder</title>
+    <title>JSON Viewer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>JSON Key Path Finder</h1>
-            <div class="mode-container">
-                <label for="modeSelector"></label>
-                <select id="modeSelector">
-                    <option value="system">System Default</option>
-                    <option value="light">Light Mode</option>
-                    <option value="dark">Dark Mode</option>
-                </select>
+    <div class="navbar">
+        <div class="tab-switch">
+            <button class="tab-button active" data-tab="inputJson">Input JSON</button>
+            <button class="tab-button" data-tab="jsonKeys">JSON Keys</button>
+            <button class="tab-button" data-tab="jqKeys">JQ Keys</button>
+            <button class="tab-button" data-tab="jsonTree">JSON Tree</button>
+            <button class="tab-button" data-tab="commaSeparator">Comma Separator</button>
+        </div>
+        <div class="theme-selector">
+            <label for="themeSelect">Theme:</label>
+            <select id="themeSelect">
+                <option value="system" selected>System Default</option>
+                <option value="dark">Dark Mode</option>
+                <option value="light">Light Mode</option>
+            </select>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="tab-content" id="inputJsonTab">
+            <textarea id="jsonInput" placeholder="Enter JSON here..."></textarea>
+        </div>
+        <div class="tab-content" id="jsonKeysTab">
+            <input type="text" id="keyFilter" placeholder="Search keys..." />
+            <pre id="jsonKeysDisplay"></pre>
+        </div>
+        <div class="tab-content" id="jqKeysTab">
+            <input type="text" id="jqKeyFilter" placeholder="Search jq keys..." />
+            <pre id="jqKeysDisplay"></pre>
+        </div>
+        <div class="tab-content" id="jsonTreeTab">
+            <div id="jsonTreeContainer"></div>
+        </div>
+        <div class="tab-content" id="commaSeparatorTab">
+            <div class="comma-container">
+                <textarea id="inputCommaText" placeholder="Enter text here..."></textarea>
+                <div class="comma-buttons">
+                    <button id="toCommaButton">To Comma ></button>
+                    <button id="fromCommaButton">From Comma < </button>
+                </div>
+                <textarea id="outputCommaText" placeholder="Result will appear here..."></textarea>
             </div>
         </div>
-
-        <label for="jsonInput">Enter JSON data:</label>
-        <textarea id="jsonInput" placeholder="Enter JSON data here...(head -1 of any JSON)"></textarea>
-
-        <label for="keyInput">Enter Search key:</label>
-        <input type="text" id="keyInput" placeholder="Enter key to search for...(Use comma for multiple keys)">
-
-        <div class="button-container">
-            <button id="searchButton">Search</button>
-            <button id="getAllKeysButton">Get All Keys</button>
-        </div>
-
-        <pre id="result"></pre>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

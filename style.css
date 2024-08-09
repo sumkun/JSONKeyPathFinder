@@ -1,236 +1,174 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
     transition: background-color 0.3s, color 0.3s;
 }
 
 body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: #333;
+    color: #f5f5f5;
 }
 
-.container {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    max-width: 80%;
-    width: 100%;
-    transition: background-color 0.3s, box-shadow 0.3s;
-    position: relative;
-}
-
-body.dark-mode .container {
-    background: #1e1e1e;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
-.header {
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
 }
 
-h1 {
-    margin-top: 0;
-    color: #333;
-    text-align: center;
-}
-
-body.dark-mode h1 {
-    color: #e0e0e0;
-}
-
-label {
-    font-size: 14px;
-    color: #333;
-    display: block;
-    margin-top: 10px;
-}
-
-body.dark-mode label {
-    color: #e0e0e0;
-}
-
-textarea, input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-textarea {
-    height: 300px;
-    resize: vertical;
-}
-
-body.dark-mode textarea, 
-body.dark-mode input {
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
-}
-
-.button-container {
+.tab-switch {
     display: flex;
-    gap: 10px;
 }
 
-button {
-    padding: 10px 15px;
-    background-color: #007BFF;
+.tab-button {
+    padding: 10px 20px;
+    background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.02);
-}
-
-body.dark-mode button {
-    background-color: #0056b3;
-}
-
-pre {
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    font-size: 16px;
-    color: #333;
-    transition: background-color 0.3s, color 0.3s;
-    margin-top: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-body.dark-mode pre {
-    background: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
-}
-
-/* Style for the mode selector dropdown */
-.mode-container select {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    color: #333;
-    font-size: 16px;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-}
-
-body.dark-mode .mode-container select {
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
-}
-
-/* Style for the dropdown options */
-.mode-container select option {
-    background-color: #f9f9f9;
-    color: #333;
-}
-
-body.dark-mode .mode-container select option {
-    background-color: #333;
-    color: #e0e0e0;
-}
-
-/* Theme switcher styles */
-.theme-switcher {
-    position: relative;
-}
-
-.theme-icon {
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-}
-
-.theme-menu {
-    display: none;
-    position: absolute;
-    top: 30px;
-    right: 0;
-    background: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 150px;
-}
-
-.theme-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.theme-menu li {
-    padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.theme-menu li:hover {
-    background-color: #f0f0f0;
+.tab-button:hover,
+.tab-button.active {
+    background-color: #0056b3;
 }
 
-body.dark-mode .theme-menu {
-    background: #1e1e1e;
-    border-color: #555;
+.theme-selector {
+    display: flex;
+    align-items: center;
 }
 
-body.dark-mode .theme-menu li {
-    color: #e0e0e0;
+.theme-selector label {
+    margin-right: 10px;
 }
 
-body.light-mode .theme-menu {
-    background: #ffffff;
-    border-color: #ccc;
+.theme-selector select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
-body.light-mode .theme-menu li {
+.main-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 50px);
+    margin: 0;
+}
+
+.tab-content {
+    flex: 1;
+    display: none;
+    padding: 20px;
+    overflow: auto;
+}
+
+#inputJsonTab textarea,
+#commaSeparatorTab textarea {
+    width: 100%;
+    height: calc(100vh - 100px);
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    resize: none;
+    background-color: #fff;
     color: #333;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-/* Responsive design for mobile screens */
-@media (max-width: 768px) {
-    .container {
-        max-width: 90%;
-    }
+body.dark-mode #inputJsonTab textarea,
+body.dark-mode #commaSeparatorTab textarea {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
+}
 
-    textarea {
-        height: 200px;
-    }
+#keyFilter,
+#jqKeyFilter {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
 
-    button {
-        font-size: 14px;
-    }
+#jsonKeysDisplay,
+#jqKeysDisplay {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow-y: auto;
+    height: calc(100vh - 150px);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode #jsonKeysDisplay,
+body.dark-mode #jqKeysDisplay {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
+}
+
+#jsonTreeContainer {
+    margin-top: 20px;
+}
+
+.comma-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.comma-container textarea {
+    width: 48%;
+    height: calc(100vh - 150px);
+}
+
+.comma-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Existing CSS rules... */
+
+.comma-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comma-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.comma-buttons button:hover {
+    background-color: #0056b3;
+}
+
+.comma-buttons button:active {
+    transform: scale(0.98);
+}
+
+.comma-buttons button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
 }
